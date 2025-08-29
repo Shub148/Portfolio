@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaTwitter, FaInstagram } from 'react-icons/fa';
 import './Contact.css';
@@ -11,6 +11,20 @@ const Contact = ({ data }) => {
     message: ''
   });
 
+  useEffect(() => {
+    const handleIntent = (e) => {
+      const intent = e.detail;
+      setFormData((prev) => ({
+        ...prev,
+        subject: intent,
+      }));
+      const el = document.getElementById('subject');
+      if (el) el.focus();
+    };
+    window.addEventListener('contact-intent', handleIntent);
+    return () => window.removeEventListener('contact-intent', handleIntent);
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -18,12 +32,25 @@ const Contact = ({ data }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! I will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      const apiBase = process.env.REACT_APP_API_URL || '';
+      const response = await fetch(`${apiBase}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, intent: formData.subject || 'Contact' })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || 'Failed to send message');
+      }
+      alert('Thanks! Your message has been sent.');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('Send message failed:', err);
+      alert('Sorry, there was a problem sending your message. Please try again later.');
+    }
   };
 
   const contactInfo = [
@@ -217,7 +244,11 @@ const Contact = ({ data }) => {
           <h3>Ready to Start Your Project?</h3>
           <p>Let's turn your ideas into reality. I'm excited to hear about your next project!</p>
           <div className="cta-actions">
-            <button className="btn btn-primary">Start a Project</button>
+            <button className="btn btn-primary" onClick={() => {
+              window.dispatchEvent(new CustomEvent('contact-intent', { detail: 'Start a Project' }));
+              const el = document.getElementById('contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}>Start a Project</button>
             <a className="btn btn-secondary" href="/documents/resume.pdf" download>
               Download Resume
             </a>

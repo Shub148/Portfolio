@@ -121,7 +121,13 @@ const Projects = ({ data }) => {
           <h3>Have a project in mind?</h3>
           <p>I'm always interested in hearing about new projects and opportunities. Let's discuss how we can work together!</p>
           <div className="cta-buttons">
-            <button className="btn btn-primary">Start a Project</button>
+            <button className="btn btn-primary" onClick={() => {
+              const el = document.getElementById('contact');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+              }
+              window.dispatchEvent(new CustomEvent('contact-intent', { detail: 'Project Inquiry' }));
+            }}>Start a Project</button>
             <button className="btn btn-secondary">View More Work</button>
           </div>
         </motion.div>

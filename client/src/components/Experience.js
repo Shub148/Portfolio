@@ -73,7 +73,13 @@ const Experience = ({ data }) => {
         >
           <h3>Looking for new opportunities!</h3>
           <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.</p>
-          <button className="btn btn-primary">Hire Me</button>
+          <button className="btn btn-primary" onClick={() => {
+            const el = document.getElementById('contact');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+            window.dispatchEvent(new CustomEvent('contact-intent', { detail: 'Hire Me' }));
+          }}>Hire Me</button>
         </motion.div>
       </div>
     </section>

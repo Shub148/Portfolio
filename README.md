@@ -62,7 +62,23 @@ A modern, responsive portfolio website built with React and Node.js, showcasing 
    cd ..
    ```
 
-4. **Start the development server**
+4. **Configure environment for contact notifications**
+   Create a `.env` file in the project root with:
+   ```
+   GMAIL_USER=your@gmail.com
+   GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
+   DESTINATION_EMAIL=shub33475@gmail.com
+
+   TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   TWILIO_FROM_NUMBER=+1xxxxxxxxxx
+   DESTINATION_PHONE=+918009835782
+   ```
+   Notes:
+   - Use a Gmail App Password (2FA required). Or switch transporter to another SMTP.
+   - Twilio is optional; if not set, only email will be attempted.
+
+5. **Start the development server**
    ```bash
    npm run dev
    ```
